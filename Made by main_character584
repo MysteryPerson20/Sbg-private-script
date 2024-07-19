@@ -1,0 +1,134 @@
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CustomGui"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Table to keep track of script states
+local scriptStates = {}
+
+-- Function to create a button with error checking and toggle functionality
+local function createButton(name, position, scriptUrl, toggle)
+    local success, errorMessage
+    local scriptEnabled = false  -- Track if the script is currently enabled
+
+    -- Create Frame
+    local frame = Instance.new("Frame")
+    frame.Name = name .. "Frame"
+    frame.Size = UDim2.new(0, 100, 0, 25)  -- Smaller size (100 x 25)
+    frame.Position = position  -- Position of the button
+    frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Black background
+    frame.BorderColor3 = Color3.fromRGB(255, 0, 0)  -- Red outline
+    frame.BorderSizePixel = 2  -- Border thickness
+    frame.Parent = screenGui
+
+    -- Create TextLabel
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Name = name .. "Label"
+    textLabel.Size = UDim2.new(1, 0, 1, 0)  -- Fill the frame
+    textLabel.BackgroundTransparency = 1  -- No background for the text label
+    textLabel.Text = name  -- Button title
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
+    textLabel.TextScaled = true  -- Scale text to fit
+    textLabel.Parent = frame
+
+    -- Create Button
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, 0, 1, 0)  -- Fill the frame
+    button.BackgroundTransparency = 1  -- Transparent background
+    button.Text = ""  -- No text on the button
+    button.Parent = frame
+
+    -- Button click event
+    button.MouseButton1Click:Connect(function()
+        if toggle then
+            if not scriptStates[name] then
+                -- Execute the script
+                success, errorMessage = pcall(function()
+                    scriptStates[name] = loadstring(game:HttpGet(scriptUrl))()
+                end)
+                if not success then
+                    warn("Failed to execute script for button " .. name .. ": " .. errorMessage)
+                end
+            else
+                -- Disable the script
+                success, errorMessage = pcall(function()
+                    -- Assuming the script exposes a way to disable it or cleanup
+                    -- Since the script provided doesn't have a disable mechanism,
+                    -- You'll need to add logic here to handle disabling if applicable
+                    scriptStates[name] = nil
+                end)
+                if not success then
+                    warn("Failed to disable script for button " .. name .. ": " .. errorMessage)
+                end
+            end
+        else
+            success, errorMessage = pcall(function()
+                loadstring(game:HttpGet(scriptUrl))()
+            end)
+            if not success then
+                warn("Failed to execute script for button " .. name .. ": " .. errorMessage)
+            end
+        end
+    end)
+end
+
+-- Function to create a reset button that executes a specific script
+local function createResetButton(name, position, scriptUrl)
+    -- Create Frame
+    local frame = Instance.new("Frame")
+    frame.Name = name .. "Frame"
+    frame.Size = UDim2.new(0, 100, 0, 25)  -- Smaller size (100 x 25)
+    frame.Position = position  -- Position of the button
+    frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Black background
+    frame.BorderColor3 = Color3.fromRGB(255, 0, 0)  -- Red outline
+    frame.BorderSizePixel = 2  -- Border thickness
+    frame.Parent = screenGui
+
+    -- Create TextLabel
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Name = name .. "Label"
+    textLabel.Size = UDim2.new(1, 0, 1, 0)  -- Fill the frame
+    textLabel.BackgroundTransparency = 1  -- No background for the text label
+    textLabel.Text = name  -- Button title
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
+    textLabel.TextScaled = true  -- Scale text to fit
+    textLabel.Parent = frame
+
+    -- Create Button
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, 0, 1, 0)  -- Fill the frame
+    button.BackgroundTransparency = 1  -- Transparent background
+    button.Text = ""  -- No text on the button
+    button.Parent = frame
+
+    -- Button click event
+    button.MouseButton1Click:Connect(function()
+        local success, errorMessage = pcall(function()
+            loadstring(game:HttpGet(scriptUrl))()
+        end)
+        if not success then
+            warn("Failed to execute reset script: " .. errorMessage)
+        end
+    end)
+end
+
+-- Create the first button (Fling)
+createButton("Fling", UDim2.new(0, 10, 0, 10), "https://pastebin.com/raw/g6zG2Rsa")
+
+-- Create the second button (Boom) positioned below the first one
+createButton("Boom", UDim2.new(0, 10, 0, 40), "https://raw.githubusercontent.com/MysteryPerson20/Ultimate-drop-flip/main/Ultimate")
+
+-- Create the third button (Invis Death) positioned below the second one
+createButton("Invis Death", UDim2.new(0, 10, 0, 70), "https://raw.githubusercontent.com/MysteryPerson20/Ultimate-3/main/Ult")
+
+-- Create the fourth button (Reset) positioned above the "Power S" button
+createResetButton("Reset", UDim2.new(1, -110, 0, 10), "https://raw.githubusercontent.com/MysteryPerson20/Kill-/main/HumanoidV2")
+
+-- Create the fifth button (Power S) positioned at the top-right corner
+createButton("Power S", UDim2.new(1, -110, 0, 40), "https://raw.githubusercontent.com/MysteryPerson20/Around/main/Player")
+
+-- Create the sixth button (One Punch) positioned below the "Power S" button
+createButton("One Punch", UDim2.new(1, -110, 0, 70), "https://raw.githubusercontent.com/MysteryPerson20/Serious-punch-/main/Fe")
+
+-- Create the seventh button (Wall Walk) positioned below the "One Punch" button
+createButton("Wall Walk", UDim2.new(1, -110, 0, 100), "https://raw.githubusercontent.com/artas01/artas01/main/walkonwall_imnotscriptdeveloper", true)
